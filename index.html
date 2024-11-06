@@ -24,7 +24,8 @@
 </head>
 <body>
   <h1>Mô Phỏng Chuyển Động Hành Tinh</h1>
-  <canvas id="simulation" width="800" height="800"></canvas>
+  <!-- Điều chỉnh kích thước canvas -->
+  <canvas id="simulation" width="350" height="500"></canvas>
   
   <div id="controls">
     <button id="speedUp">Tăng Tốc Độ</button>
@@ -36,15 +37,15 @@
     const canvas = document.getElementById("simulation");
     const ctx = canvas.getContext("2d");
 
-    // Mặt trời ở trung tâm canvas
-    const sun = { x: 400, y: 400, radius: 50, color: "yellow" };
+    // Mặt trời ở trung tâm canvas (Cập nhật lại vị trí cho phù hợp với kích thước canvas mới)
+    const sun = { x: 175, y: 250, radius: 30, color: "yellow" };
 
-    // Thông tin các hành tinh
+    // Thông tin các hành tinh (Cập nhật lại khoảng cách và kích thước cho phù hợp)
     const planets = [
-      { name: "Mercury", radius: 10, distance: 100, color: "gray", angle: 0, speed: 0.02, isDragging: false, prevX: 0, prevY: 0 },
-      { name: "Venus", radius: 15, distance: 150, color: "yellowgreen", angle: 0, speed: 0.015, isDragging: false, prevX: 0, prevY: 0 },
-      { name: "Earth", radius: 20, distance: 200, color: "blue", angle: 0, speed: 0.01, isDragging: false, prevX: 0, prevY: 0 },
-      { name: "Mars", radius: 18, distance: 250, color: "red", angle: 0, speed: 0.008, isDragging: false, prevX: 0, prevY: 0 }
+      { name: "Mercury", radius: 6, distance: 70, color: "gray", angle: 0, speed: 0.02, isDragging: false, prevX: 0, prevY: 0 },
+      { name: "Venus", radius: 8, distance: 110, color: "yellowgreen", angle: 0, speed: 0.015, isDragging: false, prevX: 0, prevY: 0 },
+      { name: "Earth", radius: 12, distance: 150, color: "blue", angle: 0, speed: 0.01, isDragging: false, prevX: 0, prevY: 0 },
+      { name: "Mars", radius: 10, distance: 190, color: "red", angle: 0, speed: 0.008, isDragging: false, prevX: 0, prevY: 0 }
     ];
 
     let simulationSpeed = 1;
