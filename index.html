@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chuyển Động Hành Tinh Xung Quanh Mặt Trời</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    canvas {
+      border: 2px solid #000;
+      margin-top: 20px;
+    }
+    #controls {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mô Phỏng Chuyển Động Hành Tinh</h1>
+  <canvas id="simulation" width="800" height="800"></canvas>
+  
+  <div id="controls">
+    <button id="speedUp">Tăng Tốc Độ</button>
+    <button id="slowDown">Giảm Tốc Độ</button>
+    <button id="resetOrbit">Đặt Lại Quỹ Đạo</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("simulation");
+    const ctx = canvas.getContext("2d");
+
+    // Mặt trời ở trung tâm canvas
+    const sun = { x: 400, y: 400, radius: 50, color: "yellow" };
+
+    // Thông tin các hành tinh
+    const planets = [
+      { name: "Mercury", radius: 10, distance: 100, color: "gray", angle: 0, speed: 0.02, isDragging: false, prevX: 0, prevY: 0 },
+      { name: "Venus", radius: 15, distance: 150, color: "yellowgreen", angle: 0, speed: 0.015, isDragging: false, prevX: 0, prevY: 0 },
+      { name: "Earth", radius: 20, distance: 200, color: "blue", angle: 0, speed: 0.01, isDragging: false, prevX: 0, prevY: 0 },
+      { name: "Mars", radius: 18, distance: 250, color: "red", angle: 0, speed: 0.008, isDragging: false, prevX: 0, prevY: 0 }
+    ];
+
+    let simulationSpeed = 1;
+    let animationFrameId;
+
+    // Vẽ Mặt Trời
+    function drawSun() {
+      ctx.beginPath();
+      ctx.arc(sun.x, sun.y, sun.radius, 0, Math.PI * 2);
+      ctx.fillStyle = sun.color;
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // Vẽ các hành tinh
+    function drawPlanets() {
+      planets.forEach(planet => {
+        const x = sun.x + planet.distance * Math.cos(planet.angle);
+        const y = sun.y + planet.distance * Math.sin(planet.angle);
+        
+        ctx.beginPath();
+        ctx.arc(x, y, planet.radius, 0, Math.PI * 2);
+        ctx.fillStyle = planet.color;
+        ctx.fill();
+        ctx.stroke();
+
+        // Hiển thị tên hành tinh
+        ctx.fillStyle = "black";
+        ctx.fillText(planet.name, x - planet.radius, y - planet.radius - 10);
+      });
+    }
+
+    // Cập nhật vị trí của các hành tinh
+    function updatePlanets() {
+      planets.forEach(planet => {
+        planet.angle += planet.speed * simulationSpeed;
+      });
+    }
+
+    // Vẽ toàn bộ mô phỏng
+    function drawSimulation() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawSun();
+      updatePlanets();
+      drawPlanets();
+      animationFrameId = requestAnimationFrame(drawSimulation);
+    }
+
+    // Điều chỉnh tốc độ quỹ đạo
+    document.getElementById("speedUp").addEventListener("click", () => {
+      simulationSpeed *= 1.2;
+    });
+    
+    document.getElementById("slowDown").addEventListener("click", () => {
+      simulationSpeed *= 0.8;
+    });
+    
+    document.getElementById("resetOrbit").addEventListener("click", () => {
+      planets.forEach(planet => planet.angle = 0);
+    });
+
+    // Kéo hành tinh để thay đổi quỹ đạo
+    canvas.addEventListener("mousedown", (e) => {
+      planets.forEach(planet => {
+        const x = sun.x + planet.distance * Math.cos(planet.angle);
+        const y = sun.y + planet.distance * Math.sin(planet.angle);
+        
+        const distance = Math.sqrt(Math.pow(e.offsetX - x, 2) + Math.pow(e.offsetY - y, 2));
+        
+        if (distance < planet.radius) {
+          planet.isDragging = true;
+          planet.prevX = e.offsetX;
+          planet.prevY = e.offsetY;
+        }
+      });
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+      planets.forEach(planet => {
+        if (planet.isDragging) {
+          const dx = e.offsetX - planet.prevX;
+          const dy = e.offsetY - planet.prevY;
+
+          // Cập nhật quỹ đạo dựa trên sự di chuyển chuột
+          planet.angle += Math.atan2(dy, dx) * simulationSpeed;
+          planet.prevX = e.offsetX;
+          planet.prevY = e.offsetY;
+        }
+      });
+    });
+
+    canvas.addEventListener("mouseup", () => {
+      planets.forEach(planet => {
+        planet.isDragging = false;
+      });
+    });
+
+    // Bắt đầu mô phỏng
+    drawSimulation();
+  </script>
+</body>
+</html>
